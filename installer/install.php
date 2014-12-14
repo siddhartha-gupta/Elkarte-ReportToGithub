@@ -97,9 +97,9 @@ function checkVersion1_0Upgrade() {
 	if($newVersion) {
 		updateSettings(
 			array(
-				'report_to_github_mod_version' => '1.0',
-				'report_to_github_enable' => 0,
-				'report_to_github_active_boards' => ''
+				'rtg_mod_version' => '1.0',
+				'rtg_mod_enable' => 0,
+				'rtg_active_boards' => ''
 			)
 		);
 	}

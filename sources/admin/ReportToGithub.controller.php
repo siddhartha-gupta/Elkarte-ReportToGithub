@@ -33,10 +33,6 @@
 if (!defined('ELK'))
 	die('Hacking attempt...');
 
-/*function ReportToGithubAdmin_Controller() {
-	
-}*/
-
 class ReportToGithubAdmin_Controller extends Action_Controller {
 	private $dbInstance;
 
@@ -46,15 +42,20 @@ class ReportToGithubAdmin_Controller extends Action_Controller {
 		global $txt, $context;
 
 		isAllowedTo('admin_forum');
-
 		require_once(SUBSDIR . '/ReportToGithub/ReportToGithubAdmin.subs.php');
 		require_once(SUBSDIR . '/SettingsForm.class.php');
-
 		$this->dbInstance = new ReportToGithubAdminDB();
 		loadtemplate('ReportToGithubAdmin');
-
 		$context['page_title'] = $txt['rtg_admin_panel'];
-		$defaultActionFunc = 'generalSettings';
+
+		$subActions = array(
+			'generalsettings' => array($this, 'action_generalSettings'),
+			'savegeneralsettings' => array($this, 'action_saveGeneralSettings'),
+			'optimizetables' => array($this, 'action_optimizetables'),
+		);
+
+		// Set up action/subaction stuff.
+		$action = new Action('reporttogithub');
 
 		// Load tabs menu, text etc for the admin panel
 		$context[$context['admin_menu_name']]['tab_data'] = array(
@@ -70,23 +71,17 @@ class ReportToGithubAdmin_Controller extends Action_Controller {
 				),
 			),
 		);
-		$context[$context['admin_menu_name']]['tab_data']['active_button'] = isset($_REQUEST['sa']) ? $_REQUEST['sa'] : 'generalsettings';
+		// Work out exactly who it is we are calling. call integrate_sa_packages
+		$subAction = $action->initialize($subActions, 'generalsettings');
 
-		$subActions = array(
-			'generalsettings' => 'generalSettings',
-			'savegeneralsettings' => 'saveGeneralSettings',
-			'optimizetables' => 'optimizetables',
-		);
+		// Set up for the template
+		$context['sub_action'] = $subAction;
 
-		//wakey wakey, call the func you lazy
-		if (isset($_REQUEST['sa']) && isset($subActions[$_REQUEST['sa']]) && method_exists(LikePosts::$LikePostsAdmin, $subActions[$_REQUEST['sa']]))
-			return $this->$subActions[$_REQUEST['sa']]();
-
-		// At this point we can just do our default.
-		$this->$defaultActionFunc();
+		// Lets just do it!
+		$action->dispatch($subAction);
 	}
 
-	public function generalSettings($return_config = false) {
+	public function action_generalSettings($return_config = false) {
 		global $txt, $context, $sourcedir;
 
 		$general_settings = array(
@@ -101,7 +96,7 @@ class ReportToGithubAdmin_Controller extends Action_Controller {
 		Settings_Form::prepare_db($general_settings);
 	}
 
-	public function saveGeneralSettings() {
+	public function action_saveGeneralSettings() {
 		global $sourcedir;
 
 		/* I can has Adminz? */
@@ -117,7 +112,7 @@ class ReportToGithubAdmin_Controller extends Action_Controller {
 		redirectexit('action=admin;area=likeposts;sa=generalsettings');
 	}
 
-	public function optimizetables() {
+	public function action_optimizetables() {
 		isAllowedTo('admin_forum');
 
 		// Lets fire the bullet.

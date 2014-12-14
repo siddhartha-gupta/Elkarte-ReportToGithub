@@ -93,8 +93,8 @@ class ReportToGithub {
 			'class' => 'admin_img_packages',
 			'permission' => array('admin_forum'),
 			'subsections' => array(
-				'generalsettings' => array($txt['rtg_general_settings'], 'admin_forum'),
-				'recountstats' => array($txt['rtg_recount_stats'], 'admin_forum'),
+				'generalsettings' => array($txt['rtg_general_settings']),
+				'recountstats' => array($txt['rtg_recount_stats']),
 			),
 		);
 	}

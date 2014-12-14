@@ -30,53 +30,12 @@
 *
 */
 
-function template_rtg_admin_info() {
-	global $context, $txt, $scripturl;
-
-	echo '
-	<div class="cat_bar">
-		<h3 class="catbg">
-			<span class="ie6_header floatleft">', $txt['rtg_admin_panel'] ,'</span>
-		</h3>
-	</div>
-	<p class="windowbg description">', isset($context['like_posts']['tab_desc']) ? $context['like_posts']['tab_desc'] : $txt['rp_general_desc'] ,'</p>';
-	
-	// The admin tabs.
-		echo '
-	<div id="adm_submenus">
-		<ul class="dropmenu">';
-	
-		// Print out all the items in this tab.
-		$menu_buttons = $context[$context['admin_menu_name']]['tab_data'];
-		foreach ($menu_buttons['tabs'] as $sa => $tab)
-		{
-			echo '
-			<li>
-				<a class="', ($menu_buttons['active_button'] == $tab['url']) ? 'active ' : '', 'firstlevel" href="', $scripturl, '?action=admin;area=reporttogithub;sa=', $tab['url'],'"><span class="firstlevel">', $tab['label'], '</span></a>
-			</li>';
-		}
-	
-		// the end of tabs
-		echo '
-		</ul>
-	</div><br class="clear" />';
-
-	echo '
-	<div class="cat_bar">
-		<h3 class="catbg">
-			', $context['like_posts']['tab_name'] ,'
-		</h3>
-	</div>';
-}
-
 function template_rtg_admin_general_settings() {
 	global $context, $txt, $scripturl;
 
-	template_rtg_admin_info();
-
 	echo '
 	<div id="admincenter">
-		<form action="'. $scripturl .'?action=admin;area=reporttogithub;sa=savegeneralsettings" method="post" accept-charset="UTF-8">
+		<form id="admin_form_wrapper" action="'. $scripturl .'?action=admin;area=reporttogithub;sa=savegeneralsettings" method="post" accept-charset="UTF-8">
 			<div class="windowbg2">
 				<span class="topslice"><span></span></span>
 					<div class="content">';
@@ -97,9 +56,6 @@ function template_rtg_admin_general_settings() {
 							if($config_var['type'] === 'check') {
 								echo '
 								<input type="checkbox" name="', $config_var['name'], '" id="', $config_var['name'], '"', ($config_var['value'] ? ' checked="checked"' : ''), ' value="1" class="input_check" />';
-							} elseif ($config_var['type'] === 'text') {
-								echo '
-								<input type="text" name="', $config_var['name'], '" id="', $config_var['name'], '" value="', $config_var['value'], '"', ($config_var['size'] ? ' size="' . $config_var['size'] . '"' : ''), ' class="input_text" />';
 							}
 
 							echo '
@@ -123,8 +79,6 @@ function template_rtg_admin_general_settings() {
 
 function template_rtg_admin_recount_stats() {
 	global $context, $txt, $scripturl, $modSettings;
-
-	template_rtg_admin_info();
 
 	echo '
 	<div id="admincenter">

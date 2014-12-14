@@ -28,7 +28,6 @@
 *
 * Contributor(s): Big thanks to all contributor(s)
 *
-*
 */
 
 function template_rtg_admin_info() {
@@ -53,7 +52,7 @@ function template_rtg_admin_info() {
 		{
 			echo '
 			<li>
-				<a class="', ($menu_buttons['active_button'] == $tab['url']) ? 'active ' : '', 'firstlevel" href="', $scripturl, '?action=admin;area=likeposts;sa=', $tab['url'],'"><span class="firstlevel">', $tab['label'], '</span></a>
+				<a class="', ($menu_buttons['active_button'] == $tab['url']) ? 'active ' : '', 'firstlevel" href="', $scripturl, '?action=admin;area=reporttogithub;sa=', $tab['url'],'"><span class="firstlevel">', $tab['label'], '</span></a>
 			</li>';
 		}
 	
@@ -77,7 +76,7 @@ function template_rtg_admin_general_settings() {
 
 	echo '
 	<div id="admincenter">
-		<form action="'. $scripturl .'?action=admin;area=likeposts;sa=savegeneralsettings" method="post" accept-charset="UTF-8">
+		<form action="'. $scripturl .'?action=admin;area=reporttogithub;sa=savegeneralsettings" method="post" accept-charset="UTF-8">
 			<div class="windowbg2">
 				<span class="topslice"><span></span></span>
 					<div class="content">';
@@ -115,93 +114,6 @@ function template_rtg_admin_general_settings() {
 					echo '
 					</div>
 				<span class="botslice"><span></span></span>
-			</div>
-	
-		</form>
-	</div>
-	<br class="clear">';
-}
-
-function template_rtg_admin_permission_settings() {
-	global $context, $txt, $scripturl, $modSettings;
-
-	template_rtg_admin_info();
-
-	echo '
-	<div id="admincenter">
-		<form action="'. $scripturl .'?action=admin;area=likeposts;sa=savepermissionsettings" method="post" accept-charset="UTF-8">
-			<div class="windowbg2">
-				<span class="topslice"><span></span></span>
-					<div class="content">';
-
-					foreach ($context['like_posts']['groups_permission_settings'] as $perm) {
-						$permVals = isset($modSettings[$perm]) && strlen($modSettings[$perm]) > 0 ? (explode(',', $modSettings[$perm])) : '';
-
-						echo ' <fieldset>';
-						echo '<legend onclick="lpObj.likePostsUtils.selectInputByLegend(event, this)" data-allselected="" class="cursor_pointer">' . $txt['rtg_perm_' . $perm] . '</legend>';
-					
-						foreach ($context['like_posts']['groups'] as $group) {
-							echo '
-								<input' . (is_array($permVals) && in_array($group['id_group'], $permVals) ? ' checked="checked"' : '') . ' id="' . $group['id_group'] . '" type="checkbox" name="' . $perm . '[]" value="' . $group['id_group'] . '" /> <label for="' . $group['id_group'] . '">' . $group['group_name'] . '</label><br />';
-						}
-						echo ' </fieldset>';
-					}
-
-
-					echo ' <fieldset>
-						<legend onclick="lpObj.likePostsUtils.selectInputByLegend(event, this)" data-allselected="" class="cursor_pointer">' . $txt['rtg_guest_permissions'] . '</legend>';
-
-						foreach ($context['like_posts']['guest_permission_settings'] as $perm) {
-							echo '
-								<input' . (isset($modSettings[$perm]) && !empty($modSettings[$perm]) ? ' checked="checked"' : '') . ' type="checkbox" name="' . $perm . '" value="1" /> <label>' . $txt['rtg_perm_' . $perm] . '</label><br />';
-						}
-					echo ' </fieldset>';
-
-					echo '
-					<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '" />
-					<input type="submit" name="submit" value="', $txt['rtg_submit'], '" tabindex="', $context['tabindex']++, '" class="button_submit" />';
-		
-					echo '
-					</div>
-				<span class="botslice"><span></span></span>
-			</div>
-	
-		</form>
-	</div>
-	<br class="clear">';
-}
-
-function template_rtg_admin_board_settings() {
-	global $context, $txt, $scripturl, $modSettings;
-
-	template_rtg_admin_info();
-
-	echo '
-	<div id="admincenter">
-		<form action="'. $scripturl .'?action=admin;area=likeposts;sa=saveboardsettings" method="post" accept-charset="UTF-8">
-			<div class="windowbg2">
-				<span class="topslice"><span></span></span>
-				<div class="content" id="rtg_board_settings">';
-
-				$activeBoards = isset($modSettings['rtg_active_boards']) && strlen($modSettings['rtg_active_boards']) > 0 ? (explode(',', $modSettings['rtg_active_boards'])) : '';
-
-				foreach ($context['categories'] as $key => $category) {
-					echo ' <fieldset>';
-					echo '<legend onclick="lpObj.likePostsUtils.selectInputByLegend(event, this)" data-allselected="" class="cursor_pointer">' . $category['name'] . '</legend>';
-				
-					foreach ($category['boards'] as $board) {
-						echo '<div class="', isset($board['child_level']) && !empty($board['child_level']) ? 'rtg_child_board': '' ,'">
-							<input' . (is_array($activeBoards) && in_array($board['id'], $activeBoards) ? ' checked="checked"' : '') . ' id="' . $board['id'] . '" type="checkbox" name="active_board[]" value="' . $board['id'] . '" /><label for="' . $board['name'] . '">' . $board['name'] . '</label></div>';
-					}
-					echo ' </fieldset>';
-				}
-				echo '
-				</div>
-				<div class="rtg_admin_board_footer">
-					<input type="checkbox" value="0" onclick="lpObj.likePostsAdmin.selectAllBoards(event, this)" /><label>' . $txt['rtg_select_all_boards'] . '</label><br /><br />
-					<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '" />
-					<input type="submit" name="submit" value="', $txt['rtg_submit'], '" tabindex="', $context['tabindex']++, '" class="button_submit" />
-				</div>
 			</div>
 	
 		</form>

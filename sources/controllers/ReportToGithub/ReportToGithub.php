@@ -84,7 +84,7 @@ class ReportToGithub {
 	public static function addAdminPanel(&$admin_areas) {
 		global $txt;
 
-		$admin_areas['config']['areas']['ReportToGithub'] = array(
+		$admin_areas['config']['areas']['reporttogithub'] = array(
 			'label' => $txt['rtg_menu'],
 			'file' => 'ReportToGithub.controller.php',
 			'controller' => 'ReportToGithubAdmin_Controller',
@@ -92,7 +92,10 @@ class ReportToGithub {
 			'icon' => 'transparent.png',
 			'class' => 'admin_img_packages',
 			'permission' => array('admin_forum'),
-			'subsections' => array(),
+			'subsections' => array(
+				'generalsettings' => array($txt['rtg_general_settings'], 'admin_forum'),
+				'recountstats' => array($txt['rtg_recount_stats'], 'admin_forum'),
+			),
 		);
 	}
 

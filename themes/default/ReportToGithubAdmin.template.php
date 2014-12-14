@@ -63,8 +63,10 @@ function template_rtg_admin_general_settings() {
 						</dl>';
 					}
 
+					// $context['session_var'] . '=' . $context['session_id']
 					echo '
 					<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '" />
+					<input type="hidden" name="', $context['admin-dbsc_token_var'], '" value="', $context['admin-dbsc_token'], '" />
 					<input type="submit" name="submit" value="', $txt['rtg_submit'], '" tabindex="', $context['tabindex']++, '" class="button_submit" />';
 		
 					echo '

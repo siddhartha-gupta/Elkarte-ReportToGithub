@@ -101,7 +101,7 @@ class ReportToGithubAdmin_Controller extends Action_Controller {
 
 		/* I can has Adminz? */
 		isAllowedTo('admin_forum');
-		checkSession('request', '', true);
+		checkSession();
 
 		$general_settings = array(
 			array('check', 'rtg_mod_enable'),
@@ -109,7 +109,7 @@ class ReportToGithubAdmin_Controller extends Action_Controller {
 		);
 
 		Settings_Form::save_db($general_settings);
-		redirectexit('action=admin;area=likeposts;sa=generalsettings');
+		redirectexit('action=admin;area=reporttogithub;sa=generalsettings');
 	}
 
 	public function action_optimizetables() {

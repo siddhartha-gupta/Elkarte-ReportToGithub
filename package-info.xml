@@ -21,11 +21,9 @@
 		<require-dir name="Sources" destination="BOARDDIR">Source files</require-dir>
 		<database>installer/install.php</database>
 		<code>installer/installHooks.php</code>
-		<modification>installer/modification.xml</modification>
 	</install>
 
 	<uninstall for="2.0 - 2.0.99">
 	    <code>installer/uninstall.php</code>
-		<modification reverse="true">installer/modification.xml</modification>
 	</uninstall>
 </package-info>

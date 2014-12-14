@@ -1,0 +1,1 @@
+Mod to report posts on github automatically

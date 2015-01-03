@@ -97,7 +97,7 @@ function template_rtg_admin_github_setup() {
 				<span class="topslice"><span></span></span>
 					<div class="content">';
 
-					foreach ($context['config_vars'] as $config_var) {
+					foreach ($context['report_to_github']['general_settings'] as $config_var) {
 						echo '
 						<dl class="settings">
 							<dt>

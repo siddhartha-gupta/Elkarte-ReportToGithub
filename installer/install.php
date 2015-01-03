@@ -80,6 +80,40 @@ function createTables() {
 					'columns' => array('id_rtg', 'id_msg'),
 				),
 			),
+		),
+		'report_to_github_creds' => array (
+			'columns' => array (
+				array(
+					'name' => 'repo',
+					'type' => 'varchar',
+					'size' => 255,
+					'default' => '',
+				),
+				array(
+					'name' => 'owner',
+					'type' => 'varchar',
+					'size' => 255,
+					'default' => '',
+				),
+				array(
+					'name' => 'username',
+					'type' => 'varchar',
+					'size' => 255,
+					'default' => '',
+				),
+				array(
+					'name' => 'password',
+					'type' => 'varchar',
+					'size' => 255,
+					'default' => '',
+				),
+				array(
+					'name' => 'hash',
+					'type' => 'varchar',
+					'size' => 255,
+					'default' => '',
+				)
+			)
 		)
 	);
 

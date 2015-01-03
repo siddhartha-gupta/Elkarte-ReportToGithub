@@ -42,9 +42,9 @@ class ReportToGithubAdmin_Controller extends Action_Controller {
 		global $txt, $context;
 
 		isAllowedTo('admin_forum');
-		require_once(SUBSDIR . '/ReportToGithub/ReportToGithubAdmin.subs.php');
+		require_once(SUBSDIR . '/ReportToGithub.subs.php');
 		require_once(SUBSDIR . '/SettingsForm.class.php');
-		$this->dbInstance = new ReportToGithubAdminDB();
+		$this->dbInstance = new ReportToGithubDB();
 		loadtemplate('ReportToGithubAdmin');
 		$context['page_title'] = $txt['rtg_admin_panel'];
 
@@ -121,16 +121,45 @@ class ReportToGithubAdmin_Controller extends Action_Controller {
 		/* I can has Adminz? */
 		isAllowedTo('admin_forum');
 
-		$general_settings = array(
-			array('text', 'rtg_github_repo', 40, 'subtext' => $txt['rtg_github_repo_desc']),
+		$context['report_to_github']['credentials'] = $this->dbInstance->getCredentials();
+		$context['report_to_github']['general_settings'] = array(
+			array(
+				'type' => 'text',
+				'name' => 'rtg_github_repo',
+				'size' => 40,
+				'subtext' => $txt['rtg_github_repo_desc'],
+				'value' => $context['report_to_github']['credentials']['rtg_github_repo']
+			),
+			array(
+				'type' => 'text',
+				'name' => 'rtg_github_owner',
+				'size' => 40,
+				'subtext' => $txt['rtg_github_owner_desc'],
+				'value' => $context['report_to_github']['credentials']['rtg_github_owner']
+			),
+			array(
+				'type' => 'text',
+				'name' => 'rtg_github_username',
+				'size' => 40,
+				'subtext' => $txt['rtg_github_username_desc'],
+				'value' => $context['report_to_github']['credentials']['rtg_github_username']
+			),
+			array(
+				'type' => 'text',
+				'name' => 'rtg_github_password',
+				'size' => 40,
+				'subtext' => $txt['rtg_github_password_desc'],
+				'value' => $context['report_to_github']['credentials']['rtg_github_password']
+			),
+
+			/*array('text', 'rtg_github_repo', 40, 'subtext' => $txt['rtg_github_repo_desc']),
 			array('text', 'rtg_github_owner', 40, 'subtext' => $txt['rtg_github_owner_desc']),
 			array('text', 'rtg_github_username', 40, 'subtext' => $txt['rtg_github_username_desc']),
-			array('text', 'rtg_github_password', 40, 'subtext' => $txt['rtg_github_password_desc']),
+			array('text', 'rtg_github_password', 40, 'subtext' => $txt['rtg_github_password_desc']),*/
 		);
 
 		$context['page_title'] = $txt['rtg_admin_panel'];
 		$context['sub_template'] = 'rtg_admin_github_setup';
-		Settings_Form::prepare_db($general_settings);
 	}
 
 	public function action_saveGithubSetup() {

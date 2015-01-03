@@ -51,6 +51,8 @@ class ReportToGithubAdmin_Controller extends Action_Controller {
 		$subActions = array(
 			'generalsettings' => array($this, 'action_generalSettings'),
 			'savegeneralsettings' => array($this, 'action_saveGeneralSettings'),
+			'githubsetup' => array($this, 'action_githubSetup'),
+			'savegithubsetup' => array($this, 'action_saveGithubSetup'),
 			'optimizetables' => array($this, 'action_optimizetables'),
 		);
 
@@ -60,21 +62,12 @@ class ReportToGithubAdmin_Controller extends Action_Controller {
 		// Load tabs menu, text etc for the admin panel
 		$context[$context['admin_menu_name']]['tab_data'] = array(
 			'title' => $txt['rtg_admin_panel'],
-			'tabs' => array(
-				'generalsettings' => array(
-					'label' => $txt['rtg_general_settings'],
-					'url' => 'generalsettings',
-				),
-				'optimizetables' => array(
-					'label' => $txt['rtg_recount_stats'],
-					'url' => 'optimizetables',
-				),
-			),
+			'help' => '',
+			'description' => $txt['rtg_admin_panel_desc'],
 		);
+
 		// Work out exactly who it is we are calling. call integrate_sa_packages
 		$subAction = $action->initialize($subActions, 'generalsettings');
-
-		// Set up for the template
 		$context['sub_action'] = $subAction;
 
 		// Lets just do it!
@@ -82,11 +75,18 @@ class ReportToGithubAdmin_Controller extends Action_Controller {
 	}
 
 	public function action_generalSettings($return_config = false) {
-		global $txt, $context, $sourcedir;
+		global $txt, $context;
+
+		// Load the boards list
+		require_once(SUBSDIR . '/Boards.subs.php');
+		$boards = getBoardList(array('override_permissions' => true, 'not_redirection' => true), true);
+		$rtg_boards = array('');
+		foreach ($boards as $board)
+			$rtg_boards[$board['id_board']] = $board['cat_name'] . ' - ' . $board['board_name'];
 
 		$general_settings = array(
 			array('check', 'rtg_mod_enable', 'subtext' => $txt['rtg_mod_enable_desc']),
-			array('check', 'rtg_active_boards', 'subtext' => $txt['rtg_active_boards_desc'])
+			array('select', 'rtg_active_boards', $rtg_boards)
 		);
 
 		$context['page_title'] = $txt['rtg_admin_panel'];
@@ -97,22 +97,51 @@ class ReportToGithubAdmin_Controller extends Action_Controller {
 	}
 
 	public function action_saveGeneralSettings() {
-		global $sourcedir;
-
 		/* I can has Adminz? */
 		isAllowedTo('admin_forum');
 		checkSession();
 
+		// Load the boards list
+		require_once(SUBSDIR . '/Boards.subs.php');
+		$boards = getBoardList(array('override_permissions' => true, 'not_redirection' => true), true);
+		$rtg_boards = array('');
+		foreach ($boards as $board)
+			$rtg_boards[$board['id_board']] = $board['cat_name'] . ' - ' . $board['board_name'];
+
 		$general_settings = array(
 			array('check', 'rtg_mod_enable'),
-			array('check', 'rtg_active_boards'),
+			array('select', 'rtg_active_boards', $rtg_boards),
 		);
 
 		Settings_Form::save_db($general_settings);
 		redirectexit('action=admin;area=reporttogithub;sa=generalsettings');
 	}
 
-	public function action_optimizetables() {
+	public function action_githubsetup() {
+		global $txt, $context;
+
+		/* I can has Adminz? */
+		isAllowedTo('admin_forum');
+
+		// Load the boards list
+		require_once(SUBSDIR . '/Boards.subs.php');
+		$boards = getBoardList(array('override_permissions' => true, 'not_redirection' => true), true);
+		$rtg_boards = array('');
+		foreach ($boards as $board)
+			$rtg_boards[$board['id_board']] = $board['cat_name'] . ' - ' . $board['board_name'];
+
+		$general_settings = array(
+			array('check', 'rtg_mod_enable', 'subtext' => $txt['rtg_mod_enable_desc'])
+		);
+
+		$context['page_title'] = $txt['rtg_admin_panel'];
+		$context['sub_template'] = 'rtg_admin_github_setup';
+		$context['like_posts']['tab_name'] = $txt['rtg_general_settings'];
+		$context['like_posts']['tab_desc'] = $txt['rtg_general_settings_desc'];
+		Settings_Form::prepare_db($general_settings);
+	}
+
+	public function action_optimizetable() {
 		isAllowedTo('admin_forum');
 
 		// Lets fire the bullet.

@@ -15,7 +15,7 @@
  * @version 1.0
  */
 ]]></license>
-	<install for="2.0 - 2.0.99">
+	<install for="1.0 - 1.0.99">
 		<readme parsebbc="true">readme.txt</readme>
 		<require-dir name="Themes" destination="BOARDDIR">Theme files</require-dir>
 		<require-dir name="Sources" destination="BOARDDIR">Source files</require-dir>
@@ -23,7 +23,7 @@
 		<code>installer/installHooks.php</code>
 	</install>
 
-	<uninstall for="2.0 - 2.0.99">
+	<uninstall for="1.0 - 1.0.99">
 	    <code>installer/uninstall.php</code>
 	</uninstall>
 </package-info>

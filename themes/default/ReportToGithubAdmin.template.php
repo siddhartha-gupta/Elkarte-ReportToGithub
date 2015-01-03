@@ -56,6 +56,16 @@ function template_rtg_admin_general_settings() {
 							if($config_var['type'] === 'check') {
 								echo '
 								<input type="checkbox" name="', $config_var['name'], '" id="', $config_var['name'], '"', ($config_var['value'] ? ' checked="checked"' : ''), ' value="1" class="input_check" />';
+							} elseif ($config_var['type'] === 'select') {
+								echo '
+										<select name="', $config_var['name'], '" id="', $config_var['name'], '">';
+
+								foreach ($config_var['data'] as $option)
+									echo '
+											<option value="', $option[0], '"', (!empty($config_var['value']) && ($option[0] == $config_var['value']) ? ' selected="selected"' : ''), '>', $option[1], '</option>';
+
+								echo '
+										</select>';
 							}
 
 							echo '
@@ -78,6 +88,56 @@ function template_rtg_admin_general_settings() {
 	</div>
 	<br class="clear">';
 }
+
+function template_rtg_admin_github_setup() {
+	global $context, $txt, $scripturl;
+
+	echo '
+	<div id="admincenter">
+		<form id="admin_form_wrapper" action="'. $scripturl .'?action=admin;area=reporttogithub;sa=savegithubsetup" method="post" accept-charset="UTF-8">
+			<div class="windowbg2">
+				<span class="topslice"><span></span></span>
+					<div class="content">';
+
+					foreach ($context['config_vars'] as $config_var) {
+						echo '
+						<dl class="settings">
+							<dt>
+								<span>'. $txt[$config_var['name']] .'</span>';
+								if (isset($config_var['subtext']) && !empty($config_var['subtext'])) {
+									echo '
+									<br /><span class="smalltext">', $config_var['subtext'] ,'</span>';
+								}
+							echo '
+							</dt>
+							<dd>';
+
+							if($config_var['type'] === 'check') {
+								echo '
+								<input type="checkbox" name="', $config_var['name'], '" id="', $config_var['name'], '"', ($config_var['value'] ? ' checked="checked"' : ''), ' value="1" class="input_check" />';
+							}
+
+							echo '
+							</dd>
+						</dl>';
+					}
+
+					// $context['session_var'] . '=' . $context['session_id']
+					echo '
+					<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '" />
+					<input type="hidden" name="', $context['admin-dbsc_token_var'], '" value="', $context['admin-dbsc_token'], '" />
+					<input type="submit" name="submit" value="', $txt['rtg_submit'], '" tabindex="', $context['tabindex']++, '" class="button_submit" />';
+		
+					echo '
+					</div>
+				<span class="botslice"><span></span></span>
+			</div>
+	
+		</form>
+	</div>
+	<br class="clear">';
+}
+
 
 function template_rtg_admin_recount_stats() {
 	global $context, $txt, $scripturl, $modSettings;

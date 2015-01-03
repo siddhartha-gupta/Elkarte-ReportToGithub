@@ -35,11 +35,16 @@ global $txt;
 
 //Admin panel strings
 $txt['rtg_menu'] = 'Report to github';
-$txt['rtg_admin_panel'] = 'Like Posts admin panel';
+$txt['rtg_admin_panel'] = 'Report to github admin panel';
+$txt['rtg_admin_panel_desc'] = 'Report post diretly to github';
+
 $txt['rtg_general_settings'] = 'General Settings';
 $txt['rtg_general_settings_desc'] = 'You can make all global settings for like posts from here.';
-$txt['rtg_recount_stats'] = 'Recount Like Stats';
-$txt['rtg_recount_stats_desc'] = 'Recount stats of like for forum.';
+$txt['rtg_github_setup'] = 'Github setup';
+$txt['rtg_github_setup_desc'] = 'Github account setup';
+$txt['rtg_optimize_table'] = 'Optimize table';
+$txt['rtg_optimize_table_desc'] = 'Optimize table';
+
 $txt['rtg_mod_enable'] = 'Enable mod';
 $txt['rtg_mod_enable_desc'] = 'Global permission to enable/disable mod';
 $txt['rtg_active_boards'] = 'Select board';

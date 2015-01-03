@@ -50,5 +50,14 @@ $txt['rtg_mod_enable_desc'] = 'Global permission to enable/disable mod';
 $txt['rtg_active_boards'] = 'Select board';
 $txt['rtg_active_boards_desc'] = 'Select board';
 
+$txt['rtg_github_repo'] = 'Name of repository to report issues';
+$txt['rtg_github_repo_desc'] = 'Name of repository to report issues';
+$txt['rtg_github_owner'] = 'Name of owner of repository';
+$txt['rtg_github_owner_desc'] = 'Name of owner of repository';
+$txt['rtg_github_username'] = 'Add your username';
+$txt['rtg_github_username_desc'] = 'Add your username (values are never shown again)';
+$txt['rtg_github_password'] = 'Add your password';
+$txt['rtg_github_password_desc'] = 'Add your password (values are never shown again)';
+
 $txt['rtg_submit'] = 'Submit';
 

@@ -72,8 +72,6 @@ function template_rtg_admin_general_settings() {
 							</dd>
 						</dl>';
 					}
-
-					// $context['session_var'] . '=' . $context['session_id']
 					echo '
 					<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '" />
 					<input type="hidden" name="', $context['admin-dbsc_token_var'], '" value="', $context['admin-dbsc_token'], '" />
@@ -112,9 +110,9 @@ function template_rtg_admin_github_setup() {
 							</dt>
 							<dd>';
 
-							if($config_var['type'] === 'check') {
+							if($config_var['type'] === 'text') {
 								echo '
-								<input type="checkbox" name="', $config_var['name'], '" id="', $config_var['name'], '"', ($config_var['value'] ? ' checked="checked"' : ''), ' value="1" class="input_check" />';
+								<input type="text" name="', $config_var['name'], '" id="', $config_var['name'], '" value="', $config_var['value'], '"', ($config_var['size'] ? ' size="' . $config_var['size'] . '"' : ''), ' class="input_text" />';
 							}
 
 							echo '
@@ -122,7 +120,7 @@ function template_rtg_admin_github_setup() {
 						</dl>';
 					}
 
-					// $context['session_var'] . '=' . $context['session_id']
+					echo '<p class="button_submit">make a test issue on github</p>';
 					echo '
 					<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '" />
 					<input type="hidden" name="', $context['admin-dbsc_token_var'], '" value="', $context['admin-dbsc_token'], '" />

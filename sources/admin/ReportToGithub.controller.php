@@ -91,8 +91,6 @@ class ReportToGithubAdmin_Controller extends Action_Controller {
 
 		$context['page_title'] = $txt['rtg_admin_panel'];
 		$context['sub_template'] = 'rtg_admin_general_settings';
-		$context['like_posts']['tab_name'] = $txt['rtg_general_settings'];
-		$context['like_posts']['tab_desc'] = $txt['rtg_general_settings_desc'];
 		Settings_Form::prepare_db($general_settings);
 	}
 
@@ -123,33 +121,35 @@ class ReportToGithubAdmin_Controller extends Action_Controller {
 		/* I can has Adminz? */
 		isAllowedTo('admin_forum');
 
-		// Load the boards list
-		require_once(SUBSDIR . '/Boards.subs.php');
-		$boards = getBoardList(array('override_permissions' => true, 'not_redirection' => true), true);
-		$rtg_boards = array('');
-		foreach ($boards as $board)
-			$rtg_boards[$board['id_board']] = $board['cat_name'] . ' - ' . $board['board_name'];
-
 		$general_settings = array(
-			array('check', 'rtg_mod_enable', 'subtext' => $txt['rtg_mod_enable_desc'])
+			array('text', 'rtg_github_repo', 40, 'subtext' => $txt['rtg_github_repo_desc']),
+			array('text', 'rtg_github_owner', 40, 'subtext' => $txt['rtg_github_owner_desc']),
+			array('text', 'rtg_github_username', 40, 'subtext' => $txt['rtg_github_username_desc']),
+			array('text', 'rtg_github_password', 40, 'subtext' => $txt['rtg_github_password_desc']),
 		);
 
 		$context['page_title'] = $txt['rtg_admin_panel'];
 		$context['sub_template'] = 'rtg_admin_github_setup';
-		$context['like_posts']['tab_name'] = $txt['rtg_general_settings'];
-		$context['like_posts']['tab_desc'] = $txt['rtg_general_settings_desc'];
 		Settings_Form::prepare_db($general_settings);
+	}
+
+	public function action_saveGithubSetup() {
+		isAllowedTo('admin_forum');
+		checkSession();
+
+		$general_settings = array(
+			array('text', 'rtg_github_repo'),
+			array('text', 'rtg_github_owner'),
+			array('text', 'rtg_github_username'),
+			array('text', 'rtg_github_password'),
+		);
+
+		Settings_Form::save_db($general_settings);
+		redirectexit('action=admin;area=reporttogithub;sa=githubsetup');
 	}
 
 	public function action_optimizetable() {
 		isAllowedTo('admin_forum');
-
-		// Lets fire the bullet.
-		@set_time_limit(300);
-		/*$this->dbInstance->optimizeLikes();
-
-		$resp = array('result' => true);
-		return ReportToGithub::$ReportToGithubUtils->sendJSONResponse($resp);*/
 	}
 }
 

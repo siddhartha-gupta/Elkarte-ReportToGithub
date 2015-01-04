@@ -44,6 +44,7 @@ class ReportToGithubAdmin_Controller extends Action_Controller {
 		isAllowedTo('admin_forum');
 		require_once(SUBSDIR . '/ReportToGithub.subs.php');
 		require_once(SUBSDIR . '/SettingsForm.class.php');
+
 		$this->dbInstance = new ReportToGithubDB();
 		loadtemplate('ReportToGithubAdmin');
 		$context['page_title'] = $txt['rtg_admin_panel'];
@@ -121,60 +122,121 @@ class ReportToGithubAdmin_Controller extends Action_Controller {
 		/* I can has Adminz? */
 		isAllowedTo('admin_forum');
 
-		$context['report_to_github']['credentials'] = $this->dbInstance->getCredentials();
-		$context['report_to_github']['general_settings'] = array(
-			array(
-				'type' => 'text',
-				'name' => 'rtg_github_repo',
-				'size' => 40,
-				'subtext' => $txt['rtg_github_repo_desc'],
-				'value' => $context['report_to_github']['credentials']['rtg_github_repo']
-			),
-			array(
-				'type' => 'text',
-				'name' => 'rtg_github_owner',
-				'size' => 40,
-				'subtext' => $txt['rtg_github_owner_desc'],
-				'value' => $context['report_to_github']['credentials']['rtg_github_owner']
-			),
-			array(
-				'type' => 'text',
-				'name' => 'rtg_github_username',
-				'size' => 40,
-				'subtext' => $txt['rtg_github_username_desc'],
-				'value' => $context['report_to_github']['credentials']['rtg_github_username']
-			),
-			array(
-				'type' => 'text',
-				'name' => 'rtg_github_password',
-				'size' => 40,
-				'subtext' => $txt['rtg_github_password_desc'],
-				'value' => $context['report_to_github']['credentials']['rtg_github_password']
-			),
+		// print_r($context['rtg_github_error']);
+		if (empty($context['rtg_github_error'])) {
+			$context['rtg_github_error'] = array();
+		}
 
-			/*array('text', 'rtg_github_repo', 40, 'subtext' => $txt['rtg_github_repo_desc']),
-			array('text', 'rtg_github_owner', 40, 'subtext' => $txt['rtg_github_owner_desc']),
-			array('text', 'rtg_github_username', 40, 'subtext' => $txt['rtg_github_username_desc']),
-			array('text', 'rtg_github_password', 40, 'subtext' => $txt['rtg_github_password_desc']),*/
-		);
-
-		$context['page_title'] = $txt['rtg_admin_panel'];
-		$context['sub_template'] = 'rtg_admin_github_setup';
+		if(isset($_REQUEST['save_prefrences']) && !empty($_REQUEST['save_prefrences'])) {
+			$this->action_saveGithubSetup();
+		} else {
+			$context['report_to_github']['credentials'] = $this->dbInstance->getCredentials();
+			$context['report_to_github']['general_settings'] = array(
+				array(
+					'type' => 'text',
+					'name' => 'rtg_github_repo',
+					'size' => 40,
+					'subtext' => $txt['rtg_github_repo_desc'],
+					'value' => $context['report_to_github']['credentials']['rtg_github_repo']
+				),
+				array(
+					'type' => 'text',
+					'name' => 'rtg_github_owner',
+					'size' => 40,
+					'subtext' => $txt['rtg_github_owner_desc'],
+					'value' => $context['report_to_github']['credentials']['rtg_github_owner']
+				),
+				array(
+					'type' => 'text',
+					'name' => 'rtg_github_username',
+					'size' => 40,
+					'subtext' => $txt['rtg_github_username_desc'],
+					'value' => $context['report_to_github']['credentials']['rtg_github_username']
+				),
+				array(
+					'type' => 'password',
+					'name' => 'rtg_github_password',
+					'size' => 40,
+					'subtext' => $txt['rtg_github_password_desc'],
+					'value' => $context['report_to_github']['credentials']['rtg_github_password']
+				),
+			);
+			$context['page_title'] = $txt['rtg_admin_panel'];
+			$context['sub_template'] = 'rtg_admin_github_setup';
+		}
 	}
 
 	public function action_saveGithubSetup() {
+		global $context;
+
 		isAllowedTo('admin_forum');
 		checkSession();
 
-		$general_settings = array(
-			array('text', 'rtg_github_repo'),
-			array('text', 'rtg_github_owner'),
-			array('text', 'rtg_github_username'),
-			array('text', 'rtg_github_password'),
-		);
+		require_once(SUBSDIR . '/Auth.subs.php');
+		loadLanguage('Errors');
+		$errors = array();
+		unset($_REQUEST['save_prefrences']);
 
-		Settings_Form::save_db($general_settings);
-		redirectexit('action=admin;area=reporttogithub;sa=githubsetup');
+		$rtgGithubRepo = $_REQUEST['rtg_github_repo'];
+		$rtgGithubOwner = $_REQUEST['rtg_github_owner'];
+		$rtgGithubUsername = $_REQUEST['rtg_github_username'];
+		$rtgGithubPassword = $_REQUEST['rtg_github_password'];
+
+		// if any field is empty you need to go back
+		if(empty($rtgGithubRepo)) {
+			$errors['rtg_github_repo'] = 'You need to fill the repository name';
+		}
+
+		if(empty($rtgGithubOwner)) {
+			$errors['rtg_github_owner'] = 'You need to fill the repository owner name';
+		}
+
+		if(empty($rtgGithubUsername)) {
+			$errors['rtg_github_username'] = 'You need to fill your github username';
+		}
+
+		if(empty($rtgGithubPassword)) {
+			$errors['rtg_github_password'] = 'You need to fill your github password';
+		}
+
+		if (!empty($errors)) {
+			foreach ($errors as $key => $error) {
+				$context['rtg_github_error'][$key] = $error;
+			}
+			return $this->action_githubsetup();
+		} else {
+			echo 'no errors: ';
+			$passHash = uniqid(mt_rand(), true);
+			$password = $this->encrypt($rtgGithubPassword, $passHash);
+
+			/*echo 'test: ' . $password;
+			die();*/
+			$this->dbInstance->updateCredentials(
+				array($rtgGithubRepo, $rtgGithubOwner, $rtgGithubUsername, $password, $passHash)
+			);
+			/*$reportToGithubCreds = array(
+				'rtg_github_repo'=> $rtgGithubRepo,
+				'rtg_github_owner'=> $rtgGithubOwner,
+				'rtg_github_username' => $rtgGithubUsername,
+				'rtg_github_password' => $password,
+				'rtg_github_hash' => $passHash,
+			);*/
+			redirectexit('action=admin;area=reporttogithub;sa=githubsetup');
+		}
+	}
+
+	private function encrypt($password, $encryption_key) {
+		$iv_size = mcrypt_get_iv_size(MCRYPT_BLOWFISH, MCRYPT_MODE_ECB);
+		$iv = mcrypt_create_iv($iv_size, MCRYPT_RAND);
+		$encrypted_string = mcrypt_encrypt(MCRYPT_BLOWFISH, $encryption_key, utf8_encode($password), MCRYPT_MODE_ECB, $iv);
+		return $encrypted_string;	
+	}
+
+	private function decrypt($encryptedPass, $encryption_key) {
+		$iv_size = mcrypt_get_iv_size(MCRYPT_BLOWFISH, MCRYPT_MODE_ECB);
+		$iv = mcrypt_create_iv($iv_size, MCRYPT_RAND);
+		$decrypted_string = mcrypt_decrypt(MCRYPT_BLOWFISH, $encryption_key, $encryptedPass, MCRYPT_MODE_ECB, $iv);
+		return $decrypted_string;
 	}
 
 	public function action_optimizetable() {

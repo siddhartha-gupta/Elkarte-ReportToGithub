@@ -92,7 +92,7 @@ function template_rtg_admin_github_setup() {
 
 	echo '
 	<div id="admincenter">
-		<form id="admin_form_wrapper" action="'. $scripturl .'?action=admin;area=reporttogithub;sa=savegithubsetup" method="post" accept-charset="UTF-8">
+		<form id="admin_form_wrapper" action="'. $scripturl .'?action=admin;area=reporttogithub;sa=githubsetup" method="post" accept-charset="UTF-8">
 			<div class="windowbg2">
 				<span class="topslice"><span></span></span>
 					<div class="content">';
@@ -102,9 +102,14 @@ function template_rtg_admin_github_setup() {
 						<dl class="settings">
 							<dt>
 								<span>'. $txt[$config_var['name']] .'</span>';
+
 								if (isset($config_var['subtext']) && !empty($config_var['subtext'])) {
 									echo '
 									<br /><span class="smalltext">', $config_var['subtext'] ,'</span>';
+								}
+								if(isset($context['rtg_github_error'][$config_var['name']])) {
+									echo '
+									<br /><span class="error">', $context['rtg_github_error'][$config_var['name']] ,'</span>';
 								}
 							echo '
 							</dt>
@@ -112,7 +117,10 @@ function template_rtg_admin_github_setup() {
 
 							if($config_var['type'] === 'text') {
 								echo '
-								<input type="text" name="', $config_var['name'], '" id="', $config_var['name'], '" value="', $config_var['value'], '"', ($config_var['size'] ? ' size="' . $config_var['size'] . '"' : ''), ' class="input_text" />';
+								<input type="text" name="', $config_var['name'], '" id="', $config_var['name'], '" value="', $config_var['value'], '"', ($config_var['size'] ? ' size="' . $config_var['size'] . '"' : ''), isset($context['rtg_github_error'][$config_var['name']]) ? ' class="error"' : ' class="input_text"  />';
+							} else if($config_var['type'] === 'password') {
+								echo '
+								<input type="password" name="', $config_var['name'], '" id="', $config_var['name'], '" value="', $config_var['value'], '"', ($config_var['size'] ? ' size="' . $config_var['size'] . '"' : ''), isset($context['rtg_github_error'][$config_var['name']]) ? ' class="error"' : ' class="input_text"  />';
 							}
 
 							echo '
@@ -121,7 +129,9 @@ function template_rtg_admin_github_setup() {
 					}
 
 					echo '<p class="button_submit">make a test issue on github</p>';
+					
 					echo '
+					<input type="hidden" name="save_prefrences" value="true" />
 					<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '" />
 					<input type="hidden" name="', $context['admin-dbsc_token_var'], '" value="', $context['admin-dbsc_token'], '" />
 					<input type="submit" name="submit" value="', $txt['rtg_submit'], '" tabindex="', $context['tabindex']++, '" class="button_submit" />';

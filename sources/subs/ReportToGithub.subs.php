@@ -62,14 +62,14 @@ class ReportToGithubDB {
 	* @param array $replaceArray
 	*/
 	public function updateCredentials($replaceArray) {
-		global $smcFunc;
+		$db = database();
 
-		$smcFunc['db_insert']('replace',
+		$db->insert('replace',
 			'{db_prefix}report_to_github_creds',
 			array('repo' => 'string-255', 'owner' => 'string-255', 'username' => 'string-255',
 				'password' => 'string-255', 'hash' => 'string-255'),
 			$replaceArray,
-			array('variable')
+			array('repo')
 		);
 	}
 }

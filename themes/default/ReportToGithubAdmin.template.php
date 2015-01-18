@@ -133,7 +133,6 @@ function template_rtg_admin_github_setup() {
 					echo '
 					<input type="hidden" name="save_prefrences" value="true" />
 					<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '" />
-					<input type="hidden" name="', $context['admin-dbsc_token_var'], '" value="', $context['admin-dbsc_token'], '" />
 					<input type="submit" name="submit" value="', $txt['rtg_submit'], '" tabindex="', $context['tabindex']++, '" class="button_submit" />';
 		
 					echo '

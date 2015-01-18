@@ -205,22 +205,11 @@ class ReportToGithubAdmin_Controller extends Action_Controller {
 			}
 			return $this->action_githubsetup();
 		} else {
-			echo 'no errors: ';
 			$passHash = uniqid(mt_rand(), true);
 			$password = $this->encrypt($rtgGithubPassword, $passHash);
-
-			/*echo 'test: ' . $password;
-			die();*/
 			$this->dbInstance->updateCredentials(
 				array($rtgGithubRepo, $rtgGithubOwner, $rtgGithubUsername, $password, $passHash)
 			);
-			/*$reportToGithubCreds = array(
-				'rtg_github_repo'=> $rtgGithubRepo,
-				'rtg_github_owner'=> $rtgGithubOwner,
-				'rtg_github_username' => $rtgGithubUsername,
-				'rtg_github_password' => $password,
-				'rtg_github_hash' => $passHash,
-			);*/
 			redirectexit('action=admin;area=reporttogithub;sa=githubsetup');
 		}
 	}
@@ -229,10 +218,11 @@ class ReportToGithubAdmin_Controller extends Action_Controller {
 		$iv_size = mcrypt_get_iv_size(MCRYPT_BLOWFISH, MCRYPT_MODE_ECB);
 		$iv = mcrypt_create_iv($iv_size, MCRYPT_RAND);
 		$encrypted_string = mcrypt_encrypt(MCRYPT_BLOWFISH, $encryption_key, utf8_encode($password), MCRYPT_MODE_ECB, $iv);
-		return $encrypted_string;	
+		return base64_encode($encrypted_string);
 	}
 
 	private function decrypt($encryptedPass, $encryption_key) {
+		$encryptedPass = base64_decode($encryptedPass);
 		$iv_size = mcrypt_get_iv_size(MCRYPT_BLOWFISH, MCRYPT_MODE_ECB);
 		$iv = mcrypt_create_iv($iv_size, MCRYPT_RAND);
 		$decrypted_string = mcrypt_decrypt(MCRYPT_BLOWFISH, $encryption_key, $encryptedPass, MCRYPT_MODE_ECB, $iv);
